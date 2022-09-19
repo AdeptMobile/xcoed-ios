@@ -9,7 +9,16 @@ module Xcoed
 
     packages = {}
     package_json['dependencies'].each do |dependency|
-      package_ref = add_swift_package_reference(project, dependency['scm'][0])
+    
+      is_scm = dependency.has_key?("scm")
+      is_local = dependency.has_key?("local")
+
+      if is_scm
+        package_ref = add_swift_package_reference(project, dependency['scm'][0])
+      elsif is_local
+        package_ref = add_local_swift_package_reference(project, dependency['local'][0])
+      end
+
       packages[dependency['name']] = package_ref
     end
 
@@ -98,15 +107,17 @@ module Xcoed
   def self.add_local_swift_package_reference(project, dependency)
     local_packages_group = local_packages_group(project)
     local_packages_group.children
-                        .select { |c| File.expand_path(c.path).downcase == dependency['location'].downcase }
+                        .select { |c| File.expand_path(c.path).downcase == dependency['path'].downcase }
                         .each(&:remove_from_project)
-    package_ref = Xcodeproj::Project::Object::FileReferencesFactory.new_reference(local_packages_group, dependency['location'], :group)
+
+
+    package_ref = Xcodeproj::Project::Object::FileReferencesFactory.new_reference(local_packages_group, dependency['path'], :group)
     package_ref.last_known_file_type = 'folder'
     package_ref
   end
 
   def self.local_packages_group(project)
-    name = 'Local Packages'
+    name = 'LocalPackages'
     project.main_group.groups.select { |g| g.name == name }.first ||
       project.main_group.new_group(name)
   end
