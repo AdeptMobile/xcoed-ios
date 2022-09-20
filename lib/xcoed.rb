@@ -105,6 +105,7 @@ module Xcoed
   end
 
   def self.add_local_swift_package_reference(project, dependency)
+    STDERR.puts dependency
     local_packages_group = local_packages_group(project)
     local_packages_group.children
                         .select { |c| File.expand_path(c.path).downcase == dependency['path'].downcase }
