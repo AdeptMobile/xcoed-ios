@@ -9,14 +9,14 @@ module Xcoed
 
     packages = {}
     package_json['dependencies'].each do |dependency|
-    
+
       is_scm = dependency.has_key?("sourceControl")
-      is_local = dependency.has_key?("local")
+      is_local = dependency.has_key?("fileSystem")
 
       if is_scm
         package_ref = add_swift_package_reference(project, dependency['sourceControl'][0])
       elsif is_local
-        package_ref = add_local_swift_package_reference(project, dependency['local'][0])
+        package_ref = add_local_swift_package_reference(project, dependency['fileSystem'][0])
       end
 
       packages[dependency['name']] = package_ref
