@@ -108,9 +108,10 @@ module Xcoed
     STDERR.puts dependency
     local_packages_group = local_packages_group(project)
     local_packages_group.children
-                        .select { |c| File.expand_path(c.path).downcase == dependency['location']['remote'][0].downcase }
+                        .select { |c| File.expand_path(c.path).downcase == dependency['path'].downcase }
                         .each(&:remove_from_project)
-    package_ref = Xcodeproj::Project::Object::FileReferencesFactory.new_reference(local_packages_group, dependency['location']['remote'][0], :group)
+
+    package_ref = Xcodeproj::Project::Object::FileReferencesFactory.new_reference(local_packages_group, dependency['path'], :group)
     package_ref.last_known_file_type = 'folder'
     package_ref
   end
