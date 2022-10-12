@@ -9,7 +9,16 @@ module Xcoed
 
     packages = {}
     package_json['dependencies'].each do |dependency|
-      package_ref = add_swift_package_reference(project, dependency['sourceControl'][0])
+    
+      is_scm = dependency.has_key?("sourceControl")
+      is_local = dependency.has_key?("local")
+
+      if is_scm
+        package_ref = add_swift_package_reference(project, dependency['sourceControl'][0])
+      elsif is_local
+        package_ref = add_local_swift_package_reference(project, dependency['local'][0])
+      end
+
       packages[dependency['name']] = package_ref
     end
 
@@ -96,6 +105,7 @@ module Xcoed
   end
 
   def self.add_local_swift_package_reference(project, dependency)
+    STDERR.puts dependency
     local_packages_group = local_packages_group(project)
     local_packages_group.children
                         .select { |c| File.expand_path(c.path).downcase == dependency['location']['remote'][0].downcase }
@@ -106,7 +116,7 @@ module Xcoed
   end
 
   def self.local_packages_group(project)
-    name = 'Local Packages'
+    name = 'LocalPackages'
     project.main_group.groups.select { |g| g.name == name }.first ||
       project.main_group.new_group(name)
   end
