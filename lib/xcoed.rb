@@ -60,7 +60,7 @@ module Xcoed
 
   def self.add_remote_swift_package_range_reference(project, dependency)
     project.root_object.package_references
-           .select { |r| r.repositoryURL.downcase == dependency['location']['remote'][0].downcase }
+           .select { |r| r.repositoryURL.downcase == dependency['location']['remote'][0]['urlString'].downcase }
            .each(&:remove_from_project)
 
     package_ref = Xcodeproj::Project::Object::XCRemoteSwiftPackageReference.new(project, project.generate_uuid)
@@ -76,11 +76,11 @@ module Xcoed
 
   def self.add_remote_swift_package_branch_reference(project, dependency)
     project.root_object.package_references
-           .select { |r| r.repositoryURL.downcase == dependency['location']['remote'][0].downcase }
+           .select { |r| r.repositoryURL.downcase == dependency['location']['remote'][0]['urlString'].downcase }
            .each(&:remove_from_project)
 
     package_ref = Xcodeproj::Project::Object::XCRemoteSwiftPackageReference.new(project, project.generate_uuid)
-    package_ref.repositoryURL = dependency['location']['remote'][0]
+    package_ref.repositoryURL = dependency['location']['remote'][0]['urlString']
     package_ref.requirement = {
       'kind' => 'branch',
       'branch' => dependency['requirement']['branch'].first
@@ -91,11 +91,11 @@ module Xcoed
 
   def self.add_remote_swift_package_revision_reference(project, dependency)
     project.root_object.package_references
-           .select { |r| r.repositoryURL.downcase == dependency['location']['remote'][0].downcase }
+           .select { |r| r.repositoryURL.downcase == dependency['location']['remote'][0]['urlString'].downcase }
            .each(&:remove_from_project)
 
     package_ref = Xcodeproj::Project::Object::XCRemoteSwiftPackageReference.new(project, project.generate_uuid)
-    package_ref.repositoryURL = dependency['location']['remote'][0]
+    package_ref.repositoryURL = dependency['location']['remote'][0]['urlString']
     package_ref.requirement = {
       'kind' => 'revision',
       'revision' => dependency['requirement']['revision'].first
