@@ -64,7 +64,7 @@ module Xcoed
            .each(&:remove_from_project)
 
     package_ref = Xcodeproj::Project::Object::XCRemoteSwiftPackageReference.new(project, project.generate_uuid)
-    package_ref.repositoryURL = dependency['location']['remote'][0]
+    package_ref.repositoryURL = dependency['location']['remote'][0]['urlString']
     package_ref.requirement = {
       'kind' => 'versionRange',
       'minimumVersion' => dependency['requirement']['range'][0]['lowerBound'],
